@@ -1,4 +1,5 @@
 import assert from "../utils/assert";
+import { readFileInLines } from "../utils/files";
 
 export async function solve(): Promise<void> {
   const testResult = await findPassword(`${import.meta.dir}/test.input.txt`);
@@ -13,7 +14,7 @@ async function findPassword(inputFilePath: string): Promise<number> {
   const d = new Dial();
   let zerosCounter = 0;
 
-  for await (const line of readInLines(inputFilePath)) {
+  for await (const line of readFileInLines(inputFilePath)) {
     const rotation = Rotation.fromString(line);
 
     const clicks = d.rotate(rotation);
@@ -86,26 +87,4 @@ class Rotation {
 
     return new Rotation(direction, distance);
   }
-}
-
-async function* readInLines(path: string): AsyncGenerator<string> {
-  const stream = Bun.file(path).stream();
-  const d = new TextDecoder();
-
-  let rest = "";
-
-  for await (const chunk of stream) {
-    const str = d.decode(chunk);
-
-    rest += str;
-
-    let lines = rest.split(/\r?\n/);
-    while (lines.length > 1) {
-      yield lines.shift() as string;
-    }
-
-    rest = lines[0] as string;
-  }
-
-  return;
 }
