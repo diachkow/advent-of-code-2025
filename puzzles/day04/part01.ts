@@ -1,34 +1,29 @@
-import assert from "../utils/assert";
 import { readEntireFile } from "../utils/files";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await countAccessibleRollsOfPaper(`${import.meta.dir}/test.input.txt`);
-  assert(testResult === 13, `Unexpected testResult. Expected: 13. Got ${testResult}`);
-  console.log("Test result met!");
+export default class extends Puzzle {
+  readonly expectedTestResult = 13;
 
-  const actualResult = await countAccessibleRollsOfPaper(`${import.meta.dir}/actual.input.txt`);
-  console.log(`actualResult is ${actualResult}`);
+  async solution(inputPath: string): Promise<number> {
+    const rawInput = await readEntireFile(inputPath);
+    const grid = createGrid<GridElement>(rawInput);
+
+    let accessibleRollsOfPaperCount = 0;
+    for (let i = 0; i < grid.rows; i++) {
+      for (let j = 0; j < grid.cols; j++) {
+        if (grid.cell(i, j) === PAPER_ROLL && countNeighboursOfType(grid, i, j, PAPER_ROLL) < 4) {
+          accessibleRollsOfPaperCount++;
+        }
+      }
+    }
+
+    return accessibleRollsOfPaperCount;
+  }
 }
 
 const PAPER_ROLL = "@" as const;
 const EMPTY_CELL = "." as const;
 type GridElement = typeof PAPER_ROLL | typeof EMPTY_CELL;
-
-async function countAccessibleRollsOfPaper(inputPath: string): Promise<number> {
-  const rawInput = await readEntireFile(inputPath);
-  const grid = createGrid<GridElement>(rawInput);
-
-  let accessibleRollsOfPaperCount = 0;
-  for (let i = 0; i < grid.rows; i++) {
-    for (let j = 0; j < grid.cols; j++) {
-      if (grid.cell(i, j) === PAPER_ROLL && countNeighboursOfType(grid, i, j, PAPER_ROLL) < 4) {
-        accessibleRollsOfPaperCount++;
-      }
-    }
-  }
-
-  return accessibleRollsOfPaperCount;
-}
 
 function countNeighboursOfType(
   grid: Grid<GridElement>,

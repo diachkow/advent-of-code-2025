@@ -1,15 +1,18 @@
-import assert from "../utils/assert";
 import { readEntireFile } from "../utils/files";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await runTachyonManifoldTroubleshooting(`${import.meta.dir}/test.input.txt`);
-  assert(testResult === 40, `Unexpected test result. Expected: 40, Got: ${testResult}`);
-  console.log("Test result matched");
+export default class extends Puzzle {
+  readonly expectedTestResult = 40;
 
-  const actualResult = await runTachyonManifoldTroubleshooting(
-    `${import.meta.dir}/actual.input.txt`,
-  );
-  console.log(`Actual result is ${actualResult}`);
+  async solution(inputPath: string): Promise<number> {
+    const rawInput = await readEntireFile(inputPath);
+    const manifold = TachyonManifold.fromString(rawInput);
+
+    const memo = new Map<string, number>();
+    const beam = new TachyonBeam(manifold.start);
+
+    return beam.run(manifold, memo);
+  }
 }
 
 const MANIFOLD_CELLS = {
@@ -19,16 +22,6 @@ const MANIFOLD_CELLS = {
 } as const;
 
 type ManifoldCell = (typeof MANIFOLD_CELLS)[keyof typeof MANIFOLD_CELLS];
-
-async function runTachyonManifoldTroubleshooting(inputPath: string): Promise<number> {
-  const rawInput = await readEntireFile(inputPath);
-  const manifold = TachyonManifold.fromString(rawInput);
-
-  const memo = new Map<string, number>();
-  const beam = new TachyonBeam(manifold.start);
-
-  return beam.run(manifold, memo);
-}
 
 class Position {
   constructor(

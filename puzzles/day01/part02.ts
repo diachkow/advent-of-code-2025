@@ -1,28 +1,23 @@
-import assert from "../utils/assert";
 import { readFileInLines } from "../utils/files";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await findPassword(`${import.meta.dir}/test.input.txt`);
-  assert(testResult == 6, `Unexpected test result. Expected: 6, got: ${testResult}`);
-  console.log(`Test output matched!`);
+export default class extends Puzzle {
+  readonly expectedTestResult = 6;
 
-  const actualResult = await findPassword(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Password is ${actualResult}`);
-}
+  async solution(inputPath: string): Promise<number> {
+    const d = new Dial();
+    let zerosCounter = 0;
 
-async function findPassword(inputFilePath: string): Promise<number> {
-  const d = new Dial();
-  let zerosCounter = 0;
+    for await (const line of readFileInLines(inputPath)) {
+      const rotation = Rotation.fromString(line);
 
-  for await (const line of readFileInLines(inputFilePath)) {
-    const rotation = Rotation.fromString(line);
+      const clicks = d.rotate(rotation);
 
-    const clicks = d.rotate(rotation);
+      zerosCounter += clicks;
+    }
 
-    zerosCounter += clicks;
+    return zerosCounter;
   }
-
-  return zerosCounter;
 }
 
 type Direction = "L" | "R";

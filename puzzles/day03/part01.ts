@@ -1,25 +1,20 @@
-import assert from "../utils/assert";
 import { readFileInLines } from "../utils/files";
 import { stringToNumber } from "../utils/numbers";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await calculateTotalOutputJoltage(`${import.meta.dir}/test.input.txt`);
-  assert(testResult === 357, `Unexpected testResult. Expected: 357. Got: ${testResult}`);
-  console.log("testResult output was successfully matched");
+export default class extends Puzzle {
+  readonly expectedTestResult = 357;
 
-  const actualResult = await calculateTotalOutputJoltage(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Actual output is ${actualResult}`);
-}
-
-async function calculateTotalOutputJoltage(inputPath: string): Promise<number> {
-  let total = 0;
-  for await (const line of readFileInLines(inputPath)) {
-    const batteryBank = BatteryBank.fromString(line);
-    const lpj = batteryBank.largestPossibleJoltage();
-    // console.log(`Battery bank ${batteryBank.toString()} largest possible joltage is ${lpj}`);
-    total += lpj;
+  async solution(inputPath: string): Promise<number> {
+    let total = 0;
+    for await (const line of readFileInLines(inputPath)) {
+      const batteryBank = BatteryBank.fromString(line);
+      const lpj = batteryBank.largestPossibleJoltage();
+      // console.log(`Battery bank ${batteryBank.toString()} largest possible joltage is ${lpj}`);
+      total += lpj;
+    }
+    return total;
   }
-  return total;
 }
 
 class BatteryBank {

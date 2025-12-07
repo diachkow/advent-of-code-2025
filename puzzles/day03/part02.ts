@@ -1,27 +1,19 @@
-import assert from "../utils/assert";
 import { readFileInLines } from "../utils/files";
 import { stringToNumber } from "../utils/numbers";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await calculateTotalOutputJoltage(`${import.meta.dir}/test.input.txt`);
-  assert(
-    testResult === 3121910778619n,
-    `Unexpected testResult. Expected: 3121910778619. Got: ${testResult}`,
-  );
-  console.log("testResult output was successfully matched");
+export default class extends Puzzle<bigint> {
+  readonly expectedTestResult = 3121910778619n;
 
-  const actualResult = await calculateTotalOutputJoltage(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Actual output is ${actualResult}`);
-}
-
-async function calculateTotalOutputJoltage(inputPath: string): Promise<bigint> {
-  let total = 0n;
-  for await (const line of readFileInLines(inputPath)) {
-    const batteryBank = BatteryBank.fromString(line);
-    const lpj = batteryBank.largestPossibleJoltage();
-    total += lpj;
+  async solution(inputPath: string): Promise<bigint> {
+    let total = 0n;
+    for await (const line of readFileInLines(inputPath)) {
+      const batteryBank = BatteryBank.fromString(line);
+      const lpj = batteryBank.largestPossibleJoltage();
+      total += lpj;
+    }
+    return total;
   }
-  return total;
 }
 
 class BatteryBank {

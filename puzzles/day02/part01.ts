@@ -1,40 +1,33 @@
-import assert from "../utils/assert";
 import { readEntireFile } from "../utils/files";
 import { stringToNumber } from "../utils/numbers";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve() {
-  const testResult = await findInvalidIDsSum(`${import.meta.dir}/test.input.txt`);
-  assert(
-    testResult === 1227775554,
-    `Invalid test result. Expected: 1227775554, Got: ${testResult}`,
-  );
+export default class extends Puzzle {
+  readonly expectedTestResult = 1227775554;
 
-  const actualResult = await findInvalidIDsSum(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Sum of all invalid IDs is ${actualResult}`);
-}
+  async solution(inputPath: string): Promise<number> {
+    const input = await readEntireFile(inputPath);
+    const rawRanges = input.split(",");
+    let result = 0;
 
-async function findInvalidIDsSum(path: string): Promise<number> {
-  const input = await readEntireFile(path);
-  const rawRanges = input.split(",");
-  let result = 0;
+    for (let i = 0; i < rawRanges.length; i++) {
+      const numbers = rawRanges[i]!.split("-");
+      if (numbers.length !== 2) {
+        throw new Error(`Invalid IDs range: ${rawRanges[i]}`);
+      }
+      const start = stringToNumber(numbers[0]!);
+      const end = stringToNumber(numbers[1]!);
 
-  for (let i = 0; i < rawRanges.length; i++) {
-    const numbers = rawRanges[i]!.split("-");
-    if (numbers.length !== 2) {
-      throw new Error(`Invalid IDs range: ${rawRanges[i]}`);
-    }
-    const start = stringToNumber(numbers[0]!);
-    const end = stringToNumber(numbers[1]!);
-
-    for (let num = start; num <= end; num++) {
-      if (isInvalidID(num)) {
-        // console.log(`Number ${num} is invalid ID, adding it to the result sum`);
-        result += num;
+      for (let num = start; num <= end; num++) {
+        if (isInvalidID(num)) {
+          // console.log(`Number ${num} is invalid ID, adding it to the result sum`);
+          result += num;
+        }
       }
     }
-  }
 
-  return result;
+    return result;
+  }
 }
 
 function isInvalidID(n: number): boolean {

@@ -1,32 +1,27 @@
-import assert from "../utils/assert";
 import { readFileInLines } from "../utils/files";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await findPassword(`${import.meta.dir}/test.input.txt`);
-  assert(testResult == 3, `Unexpected test result. Expected: 3, got: ${testResult}`);
-  console.log(`Test output matched!`);
+export default class extends Puzzle {
+  readonly expectedTestResult = 3;
 
-  const actualResult = await findPassword(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Password is ${actualResult}`);
-}
+  async solution(inputPath: string): Promise<number> {
+    const d = new Dial();
+    let zerosCounter = 0;
 
-async function findPassword(inputFilePath: string): Promise<number> {
-  const d = new Dial();
-  let zerosCounter = 0;
+    for await (const line of readFileInLines(inputPath)) {
+      const rotation = Rotation.fromString(line);
 
-  for await (const line of readFileInLines(inputFilePath)) {
-    const rotation = Rotation.fromString(line);
+      d.rotate(rotation);
+      // console.log(`The dial is rotated ${line} to point at ${d.value}`);
+      // assert(d.value >= 0 && d.value <= 99, `Invalid value: ${d.value}`);
 
-    d.rotate(rotation);
-    // console.log(`The dial is rotated ${line} to point at ${d.value}`);
-    // assert(d.value >= 0 && d.value <= 99, `Invalid value: ${d.value}`);
-
-    if (d.value === 0) {
-      zerosCounter++;
+      if (d.value === 0) {
+        zerosCounter++;
+      }
     }
-  }
 
-  return zerosCounter;
+    return zerosCounter;
+  }
 }
 
 type Direction = "L" | "R";

@@ -1,30 +1,25 @@
-import assert from "../utils/assert";
 import { readFileInLines } from "../utils/files";
 import { stringToNumber } from "../utils/numbers";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await countFreshProducts(`${import.meta.dir}/test.input.txt`);
-  assert(testResult === 3, `Test result is not matched. Expected: 3, Got: ${testResult}`);
-  console.log(`Test result matched`);
+export default class extends Puzzle {
+  readonly expectedTestResult = 3;
 
-  const actualResult = await countFreshProducts(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Actual result is ${actualResult}`);
-}
+  async solution(inputPath: string): Promise<number> {
+    const { ranges, ids } = await processInput(inputPath);
+    let counter = 0;
 
-async function countFreshProducts(inputPath: string): Promise<number> {
-  const { ranges, ids } = await processInput(inputPath);
-  let counter = 0;
-
-  for (const id of ids) {
-    for (const range of ranges) {
-      if (range.includes(id)) {
-        counter++;
-        break;
+    for (const id of ids) {
+      for (const range of ranges) {
+        if (range.includes(id)) {
+          counter++;
+          break;
+        }
       }
     }
-  }
 
-  return counter;
+    return counter;
+  }
 }
 
 async function processInput(inputPath: string): Promise<{ ranges: IDRange[]; ids: number[] }> {

@@ -1,32 +1,27 @@
-import assert from "../utils/assert";
 import { readEntireFile } from "../utils/files";
 import { stringToNumber } from "../utils/numbers";
+import { Puzzle } from "../utils/puzzle";
 
-export async function solve(): Promise<void> {
-  const testResult = await calculateGrandTotal(`${import.meta.dir}/test.input.txt`);
-  assert(testResult === 3263827n, `Unexpected test result. Expected: 3263827, Got: ${testResult}`);
-  console.log(`Test result matched!`);
+export default class extends Puzzle<bigint> {
+  readonly expectedTestResult = 3263827n;
 
-  const actualResult = await calculateGrandTotal(`${import.meta.dir}/actual.input.txt`);
-  console.log(`Actual result is ${actualResult}`);
-}
-
-async function calculateGrandTotal(inputPath: string): Promise<bigint> {
-  const rawInput = await readEntireFile(inputPath);
-  const cols = parseInput(rawInput);
-  let result = 0n;
-  for (const col of cols) {
-    switch (col.operator) {
-      case "*":
-        result += col.args.reduce((acc, val) => acc * val, 1n);
-        break;
-      case "+":
-        result += col.args.reduce((acc, val) => acc + val, 0n);
-        break;
+  async solution(inputPath: string): Promise<bigint> {
+    const rawInput = await readEntireFile(inputPath);
+    const cols = parseInput(rawInput);
+    let result = 0n;
+    for (const col of cols) {
+      switch (col.operator) {
+        case "*":
+          result += col.args.reduce((acc, val) => acc * val, 1n);
+          break;
+        case "+":
+          result += col.args.reduce((acc, val) => acc + val, 0n);
+          break;
+      }
+      // console.log(`Result after applying '${col.operator}' with ${col.args}: ${result}`);
     }
-    // console.log(`Result after applying '${col.operator}' with ${col.args}: ${result}`);
+    return result;
   }
-  return result;
 }
 
 type Operator = "+" | "*";
