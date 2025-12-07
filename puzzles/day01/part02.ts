@@ -47,7 +47,9 @@ class Dial {
       }
     } else if (this.value >= 100) {
       this.value -= 100;
-      zerosCounter++;
+      if (this.value !== 0) {
+        zerosCounter++;
+      }
     }
 
     if (this.value === 0) {
