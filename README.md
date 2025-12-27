@@ -1,15 +1,11 @@
-# aoc2025
+# Advent of Code 2025
 
-To install dependencies:
+Everything I got for [AoC 2025](https://adventofcode.com/2025).
 
-```bash
-bun install
+To run solution for day 1 use
+
+```
+bun solve day01
 ```
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.3. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Replace `day01` with other value to run other days' puzzles. All the code is within [`puzzles/`](./puzzles/).
